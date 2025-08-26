@@ -1,8 +1,11 @@
 # SLOG 
 
-## Examples
+## About
 Simple logging library. 
 The minimum version of the standard required for the library to work is C++17,
+
+## Examples
+
 
 ### C++17
 ```c++
@@ -48,6 +51,7 @@ int main() {
 ### Subdirectory
 ```CMake
 cmake_minimum_required(VERSION 3.5)
+project(test)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -72,7 +76,6 @@ FetchContent_Declare(
   GIT_TAG        v1.0.0
 )
 FetchContent_MakeAvailable(slog)
-
 
 add_executable(test main.cpp)
 target_link_libraries(test slog::slog)
