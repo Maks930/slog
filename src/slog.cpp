@@ -13,7 +13,7 @@
 
 static std::ofstream logfile;
 static std::string utcOffset;
-static int modLen = 25;
+static int modLen = 15;
 static std::mutex mutex;
 
 void log_write(const slog::levels& level, const std::string& filename, const std::string& msg);
