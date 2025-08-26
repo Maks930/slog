@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.1)
+cmake_minimum_required(VERSION 3.4)
 project(slog
         VERSION 1.0.0
         DESCRIPTION "Simple log library"
