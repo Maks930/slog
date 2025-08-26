@@ -1,0 +1,3 @@
+add_subdirectory(base_example)
+add_subdirectory(format_example)
+add_subdirectory(multithread_example)
