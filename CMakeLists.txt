@@ -9,7 +9,7 @@ string(COMPARE EQUAL "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}"
 
 
 
-option(SLOG_BUILD_EXAMPLES "Build slog examples" ON)
+option(SLOG_BUILD_EXAMPLES "Build slog examples" OFF)
 #option(SLOG_INSTALL "Generate target for installing slog" ${is_top_level})
 #set_if_undefined(SLOG_INSTALL_CMAKEDIR
 #    "${CMAKE_INSTALL_LIBDIR}/cmake/slog-${PROJECT_VERSION}" CACHE STRING
