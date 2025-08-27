@@ -5,8 +5,8 @@
 #include <slog/slog.h>
 
 int main() {
-    slog::Logger::init("latest.log");
-    auto l = slog::Logger("MAIN");
+    slog::Logger::init("latest.log", slog::levels::DEBUG);
+    auto l = slog::Logger("MAIN", slog::levels::TRACE);
     l.trace("Hello, C++{}", __cplusplus);
     l.info("Some message");
     l.debug("Number: {}", 58);

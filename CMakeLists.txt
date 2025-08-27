@@ -8,12 +8,12 @@ string(COMPARE EQUAL "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}"
         is_top_level)
 
 
-
 option(SLOG_BUILD_EXAMPLES "Build slog examples" OFF)
 #option(SLOG_INSTALL "Generate target for installing slog" ${is_top_level})
 #set_if_undefined(SLOG_INSTALL_CMAKEDIR
 #    "${CMAKE_INSTALL_LIBDIR}/cmake/slog-${PROJECT_VERSION}" CACHE STRING
 #    "Install path for slog package-related CMake files")
+
 if (DEFINED SLOG_SHARED_LIBS)
     set(BUILD_SHARED_LIBS ${SLOG_SHARED_LIBS})
 endif()

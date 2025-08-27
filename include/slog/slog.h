@@ -23,7 +23,7 @@
 
 namespace  slog {
 
-    enum class levels {TRACE, INFO, DEBUG, WARN, ERROR, CRIT};
+    enum class levels {TRACE = 0, INFO = 1, DEBUG = 2, WARN = 3, ERROR = 4, CRIT = 5};
 
     class Logger;
 
@@ -46,15 +46,22 @@ namespace  slog {
     class Logger {
     private:
         std::string m_sName;
+        slog::levels m_ignoreConsoleLevel;
 
         void static setUtcOffset();
 
     public:
         explicit Logger(std::string name);
+        explicit Logger(std::string name, const slog::levels& level);
         static void init(const std::string& filename);
+        static void init(const std::string& filename, const slog::levels& level);
         static void flush();
 
         void log(const slog::levels& level, const std::string& msg) const;
+
+        [[nodiscard]] slog::levels level() const;
+        [[nodiscard]] static slog::levels file_level();
+
 
         LogMessage info();
         LogMessage debug();

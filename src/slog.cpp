@@ -15,8 +15,9 @@ static std::ofstream logfile;
 static std::string utcOffset;
 static int modLen = 15;
 static std::mutex mutex;
+static auto ignoreFileLevel{slog::levels::TRACE};
 
-void log_write(const slog::levels& level, const std::string& filename, const std::string& msg);
+void log_write(const slog::levels& level, const std::string& filename, const std::string& msg, const slog::levels& ignoreConsoleLevel = slog::levels::TRACE);
 
 slog::LogMessage::LogMessage(Logger *logger, const slog::levels& level) : m_pLogger(logger), m_level(level)
 {}
@@ -41,27 +42,53 @@ void slog::Logger::setUtcOffset() {
     utcOffset = ss.str();
 }
 
-slog::Logger::Logger(std::string name) : m_sName(std::move(name))
-{}
+slog::Logger::Logger(std::string name) : m_sName(std::move(name)) {
+    m_ignoreConsoleLevel = slog::levels::TRACE;
+}
+
+slog::Logger::Logger(std::string name, const slog::levels &level) : m_sName(std::move(name)) {
+    m_ignoreConsoleLevel = level;
+}
+
 
 void slog::Logger::init(const std::string &filename) {
     logfile.open(filename, std::ios::out | std::ios::app);
     setUtcOffset();
 }
 
+void slog::Logger::init(const std::string &filename, const slog::levels &level) {
+    ignoreFileLevel = level;
+    logfile.open(filename, std::ios::out | std::ios::app);
+    setUtcOffset();
+}
+
+
 void slog::Logger::flush() {
     std::lock_guard<std::mutex> lock(mutex);
     logfile.flush();
 }
 
+
 void slog::Logger::log(const slog::levels &level, const std::string &msg) const {
     if (utcOffset.empty()) {
         setUtcOffset();
     }
-    log_write(level, m_sName, msg);
+    log_write(level, m_sName, msg, this->m_ignoreConsoleLevel);
 }
 
-void log_write(const slog::levels& level, const std::string& filename, const std::string& msg) {
+slog::levels slog::Logger::level() const {
+    return m_ignoreConsoleLevel;
+}
+
+slog::levels slog::Logger::file_level() {
+    return ignoreFileLevel;
+}
+
+void log_write(const slog::levels& level, const std::string& filename, const std::string& msg, const slog::levels& ignoreConsoleLevel) {
+    if (level < ignoreFileLevel && level < ignoreConsoleLevel) {
+        return;
+    }
+
     std::stringstream ss;
 
     const std::time_t tm = std::time(nullptr);
@@ -100,12 +127,14 @@ void log_write(const slog::levels& level, const std::string& filename, const std
     {
         std::lock_guard<std::mutex> lock(mutex);
         const auto str = ss.str();
-        if (logfile.good()) {
+        if (logfile.good() && level >= ignoreFileLevel) {
             logfile << str << "\n";
             logfile.flush();
         }
 
-        std::cout << str << std::endl;
+        if (level >= ignoreConsoleLevel) {
+            std::cout << str << std::endl;
+        }
     }
 }
 
