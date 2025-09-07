@@ -18,7 +18,7 @@ if (DEFINED SLOG_SHARED_LIBS)
     set(BUILD_SHARED_LIBS ${SLOG_SHARED_LIBS})
 endif()
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 add_library(slog)
 add_library(slog::slog ALIAS slog)
@@ -26,9 +26,22 @@ add_library(slog::slog ALIAS slog)
 include(cmake/utils.cmake)
 include(GNUInstallDirs)
 
-set(public_headers include/slog/slog.h)
+set(sources
+        include/slog/slog.h
+        include/slog/sink.h
+        include/slog/LogMessage.h
+        include/slog/levels.h
+        include/slog/Logger.h
+        include/slog/Manager.h
 
-target_sources(slog PRIVATE src/slog.cpp)
+        src/slog.cpp
+        src/sink.cpp
+        src/LogMessage.cpp
+        src/Logger.cpp
+        src/Manager.cpp
+)
+
+target_sources(slog PRIVATE ${sources})
 
 target_include_directories(slog
         PUBLIC
@@ -38,14 +51,6 @@ target_include_directories(slog
         "${CMAKE_CURRENT_SOURCE_DIR}/src"
         "${CMAKE_CURRENT_SOURCE_DIR}/include/slog"
 )
-
-
-set_target_properties(slog PROPERTIES
-        PUBLIC_HEADER ${public_headers}
-        SOVERSION ${PROJECT_VERSION_MAJOR}
-        VERSION ${PROJECT_VERSION}
-)
-
 
 if (SLOG_BUILD_EXAMPLES)
     add_subdirectory(examples)
