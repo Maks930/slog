@@ -2,31 +2,9 @@
 
 ## About
 Simple logging library. 
-The minimum version of the standard required for the library to work is C++17,
+The minimum version of the standard required for the library to work is C++20,
 
 ## Examples
-
-
-### C++17
-```c++
-#include <slog/slog.h>
-
-int main() {
-    slog::Logger::init("latest.log");
-    auto l = slog::Logger("MAIN");
-    l.trace() << "Hello World!";
-    l.info() << "Some message";
-    l.debug() << "Some debug message";
-    l.warn() << "some warning message";
-    l.error() << "some error message";
-    l.critical() << "some critical message";
-
-    return 0;
-}
-```
-
-With C++20 and later versions, you can use functions that support 
-std::format while still being able to use shifts.
 
 ### C++20 and later
 ```c++

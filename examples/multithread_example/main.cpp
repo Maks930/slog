@@ -6,41 +6,39 @@
 #include <chrono>
 #include <slog/slog.h>
 
-void task1() {
-    auto l = slog::Logger("TASK-1");
-    l.trace("Logger created");
-    std::this_thread::sleep_for(std::chrono::seconds(2));
-    l.info("Prev message have level trace");
-    std::this_thread::sleep_for(std::chrono::seconds(5));
-    l.debug("Prev message have level debug");
-    std::this_thread::sleep_for(std::chrono::seconds(12));
-    l.warn("Potential error");
-    std::this_thread::sleep_for(std::chrono::seconds(3));
-    l.error("Not critical error");
-    std::this_thread::sleep_for(std::chrono::seconds(4));
-    l.critical("Critical error");
-}
 
-void task2() {
-    auto l = slog::Logger("TASK-2");
-    l.trace("task 2 started");
-    std::this_thread::sleep_for(std::chrono::seconds(5));
-    l.info("Thread sleep 5 sec");
-    std::this_thread::sleep_for(std::chrono::seconds(8));
-    l.debug("This message debug");
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    l.warn("Zero division");
-    std::this_thread::sleep_for(std::chrono::seconds(2));
-    l.error("Index out of range");
-    std::this_thread::sleep_for(std::chrono::seconds(6));
-    l.critical("runtime error");
-}
 
 int main() {
 
-    slog::Logger("MAIN").trace("START EXAMPLE");
-    std::thread t1(task1);
-    std::thread t2(task2);
+    auto file_sink = std::make_shared<slog::sinks::FileSink>("main.log");
+
+    std::thread t1([&file_sink]() {
+
+        const auto logger = slog::Manager::instance().add_loger("Thread-1");
+
+        logger->addSink(std::make_shared<slog::sinks::ConsoleSink>());
+        logger->addSink(file_sink);
+        logger->addSink(std::make_shared<slog::sinks::FileSink>("thread1.log"));
+
+
+        logger->trace("Hello, World!, {}", 1); std::this_thread::sleep_for(std::chrono::seconds(1));
+        logger->info("Hello, World!, {}", 2); std::this_thread::sleep_for(std::chrono::seconds(2));
+        logger->debug("Hello, World!, {}", 3); std::this_thread::sleep_for(std::chrono::seconds(1));
+        logger->warning("Hello, World!, {}", 4); std::this_thread::sleep_for(std::chrono::seconds(5));
+    });
+
+    std::thread t2([&file_sink]() {
+        const auto logger = slog::Manager::instance().add_loger("Thread-2", slog::levels::TRACE);
+
+        logger->addSink(std::make_shared<slog::sinks::ConsoleSink>());
+        logger->addSink(file_sink);
+        logger->addSink(std::make_shared<slog::sinks::FileSink>("thread2.log"));
+
+        logger->warning("Hello, World!, {}", 5); std::this_thread::sleep_for(std::chrono::milliseconds(512));
+        logger->error("Hello, World!, {}", 6); std::this_thread::sleep_for(std::chrono::seconds(3));
+        logger->critical("Hello, World!, {}", 7); std::this_thread::sleep_for(std::chrono::seconds(4));
+        logger->info("Hello, World!, {}", 8); std::this_thread::sleep_for(std::chrono::seconds(1));
+    });
 
     t1.join();
     t2.join();

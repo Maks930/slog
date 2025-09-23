@@ -5,14 +5,17 @@
 #include <slog/slog.h>
 
 int main() {
-    slog::Logger::init("latest.log");
-    auto l = slog::Logger("MAIN");
-    l.trace() << "Hello World!";
-    l.info() << "Some message";
-    l.debug() << "Some debug message";
-    l.warn() << "some warning message";
-    l.error() << "some error message";
-    l.critical() << "some critical message";
+    const auto logger = slog::Manager::instance().add_loger("MAIN");
+    logger->addSink(std::make_shared<slog::sinks::ConsoleSink>());
+    logger->addSink(std::make_shared<slog::sinks::FileSink>("./latest.log"));
+
+    logger->trace("Hello trace");
+    logger->info("Hello info");
+    logger->debug("Hello debug");
+    logger->warning("Hello warning");
+    logger->error("Hello error");
+    logger->critical("Hello critical");
+
 
     return 0;
 }

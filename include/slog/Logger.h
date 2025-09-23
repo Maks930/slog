@@ -11,18 +11,9 @@
 
 #include <chrono>
 #include <format>
-#include <sstream>
-#include <iomanip>
-
-
-// #include <sink.h>
-// #include <LogMessage.h>
 
 #include "sink.h"
 #include "LogMessage.h"
-
-// template<typename... Args>
-
 
 
 namespace slog {
@@ -34,6 +25,7 @@ private:
     std::string m_name;
     std::vector<std::shared_ptr<sinks::ISink>> m_sinks;
     levels m_level;
+    std::mutex m_mutex;
 
     std::string_view _format;
 
@@ -45,6 +37,8 @@ public:
     ~Logger();
 
     [[nodiscard]] std::string name() const;
+
+    void set_level(const levels& level);
 
     void addSink(std::shared_ptr<sinks::ISink> sink);
 
